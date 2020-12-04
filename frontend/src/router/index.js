@@ -4,6 +4,7 @@ import VueRouter from "vue-router";
 import Auth from '@okta/okta-vue'
 
 import Dashboard from '@/components/Dashboard'
+import Health from '@/components/Health/Health'
 
 Vue.use(Auth, {
   issuer: 'https://dev-3720054.okta.com',
@@ -14,7 +15,7 @@ Vue.use(Auth, {
 
 Vue.use(VueRouter);
 
-const router = new VueRouter({
+let router = new VueRouter({
   mode: "history",
   routes: [
     {
@@ -24,7 +25,10 @@ const router = new VueRouter({
       props: true
     },
     {
-      path: 'implicit/callback',
+      path: '/health', name: 'Health', component: Health, props: true
+    },
+    {
+      path: '/implicit/callback',
       component: Auth.handleCallback()
     },
   ]

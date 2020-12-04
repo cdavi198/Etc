@@ -1,28 +1,20 @@
 <template>
   <div id="app">
     <header>
-      <b-navbar toggleable="md" type="light" variant="light">
-        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
-        <b-navbar-brand to="/">Love Pizza</b-navbar-brand>
-        <b-collapse is-nav id="nav-collapse">
-          <b-navbar-nav>
-            <b-nav-item href="#" @click.prevent="login" v-if="!user">Login</b-nav-item>
-            <b-nav-item href="#" @click.prevent="logout" v-else>Logout</b-nav-item>
-          </b-navbar-nav>
-        </b-collapse>
-      </b-navbar>
+      <navbar></navbar>
     </header>
     <main>
-      <div>
-        Love pizza button and clicks counter here
-      </div>
+      <router-view :user="user"></router-view>
     </main>
   </div>
 </template>
 
 <script>
+//import Username from "@/components/Username"
+import navbar from "@/components/Navbar"
 export default {
   name: 'app',
+  components: { navbar },
   data() {
     return {
       user: null

@@ -1,138 +1,86 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br />
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener"
-        >vue-cli documentation</a
-      >.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel"
-          target="_blank"
-          rel="noopener"
-          >babel</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-router"
-          target="_blank"
-          rel="noopener"
-          >router</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint"
-          target="_blank"
-          rel="noopener"
-          >eslint</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-unit-jest"
-          target="_blank"
-          rel="noopener"
-          >unit-jest</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-e2e-cypress"
-          target="_blank"
-          rel="noopener"
-          >e2e-cypress</a
-        >
-      </li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li>
-        <a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a>
-      </li>
-      <li>
-        <a href="https://forum.vuejs.org" target="_blank" rel="noopener"
-          >Forum</a
-        >
-      </li>
-      <li>
-        <a href="https://chat.vuejs.org" target="_blank" rel="noopener"
-          >Community Chat</a
-        >
-      </li>
-      <li>
-        <a href="https://twitter.com/vuejs" target="_blank" rel="noopener"
-          >Twitter</a
-        >
-      </li>
-      <li>
-        <a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a>
-      </li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li>
-        <a href="https://router.vuejs.org" target="_blank" rel="noopener"
-          >vue-router</a
-        >
-      </li>
-      <li>
-        <a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a>
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-devtools#vue-devtools"
-          target="_blank"
-          rel="noopener"
-          >vue-devtools</a
-        >
-      </li>
-      <li>
-        <a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener"
-          >vue-loader</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/awesome-vue"
-          target="_blank"
-          rel="noopener"
-          >awesome-vue</a
-        >
-      </li>
-    </ul>
+  <div id="dashboard">
+    <h1 class="h1">Love Pizza, Vote for Pizza</h1>
+    <b-alert :show="error.length === 0 && !isLogged" variant="warning">Please login in order to be able to vote.</b-alert>
+    <b-alert :show="error.length > 0" variant="danger">{{ error }}</b-alert>
+    <b-alert :show="loading" variant="info">Loading...</b-alert>
+    <div class="main">
+      <div class="positive">
+        <b-badge v-if="userRecords" v-show="userRecords.value > 0" variant="success" class="count">{{ userRecords.value }}</b-badge>
+        <b-btn v-show="!loading && isLogged" type="submit" variant="success"
+               @click.prevent="addVote(loggedInUser.email, VOTES.UP)">
+          I love it
+        </b-btn>
+      </div>
+    </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: "Dashboard",
-  props: {
-    msg: String
+<style lang="scss">
+.main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .count {
+    margin: 1em;
   }
-};
-</script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
-h3 {
-  margin: 40px 0 0;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+.positive {
+  display: flex;
+  flex-direction: column;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+.negative {
+  display: flex;
+  flex-direction: column;
 }
 </style>
+
+<script>
+import api from '@/TrackerService';
+export default {
+  components: {  },
+  props: { user: Object },
+  watch: {
+    user: async function(newVal) {
+      if (newVal) {
+        this.loggedInUser = newVal
+        this.userRecords = await this.getById(newVal.email)
+      }
+    }
+  },
+  data() {
+    return {
+      loading: false,
+      userRecords: {},
+      error: "",
+      isLogged: false,
+      VOTES: {
+        UP: 'UP',
+        DOWN: 'DOWN'
+      },
+      loggedInUser: this.user,
+      pizzaLovers: []
+    }
+  },
+  async created() {
+    this.pizzaLovers = await api.getAll()
+  },
+  methods: {
+    async getById(id) {
+      this.loading = true
+      try {
+        this.isLogged = true
+        return await api.getById(id)
+      } catch (error) {
+        if (error && error.response && error.response.status === 401) {
+          this.isLogged = false
+        } else {
+          this.error = error.message
+        }
+      } finally {
+        this.loading = false
+      }
+    },
+  }
+}
+</script>

@@ -76,3 +76,5 @@
 /Users/connerdavis/Etc/backend/obj/Debug/net5.0/ref/backend.dll
 /Users/connerdavis/Etc/backend/obj/Debug/net5.0/backend.pdb
 /Users/connerdavis/Etc/backend/obj/Debug/net5.0/backend.genruntimeconfig.cache
+/Users/connerdavis/Etc/backend/bin/Debug/net5.0/Humanizer.dll
+/Users/connerdavis/Etc/backend/bin/Debug/net5.0/Microsoft.EntityFrameworkCore.Design.dll
