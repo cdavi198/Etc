@@ -19,8 +19,10 @@ export default new Vuex.Store({
         }
     },
     actions: {
-        getSomething({ commite }) {
-            axios.get();
+        getSomething({ commit }) {
+            axios.get()
+            .then(result => this.commit('something', result.data))
+            .catch(console.error);
         }
     }
 });
