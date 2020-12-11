@@ -3,8 +3,10 @@ import VueRouter from "vue-router";
 
 import Auth from '@okta/okta-vue'
 
-import Dashboard from '@/components/Dashboard'
 import Health from '@/components/Health/Health'
+import Home from '@/views/Home'
+import Golf from '@/views/Golf'
+import Dnd from '@/views/Dnd'
 
 Vue.use(Auth, {
   issuer: 'https://dev-3720054.okta.com',
@@ -20,9 +22,15 @@ let router = new VueRouter({
   routes: [
     {
       path: '/',
-      name: 'Dashboard',
-      component: Dashboard,
+      name: 'Home',
+      component: Home,
       props: true
+    },
+    {
+      path: '/dnd', name: 'D&D', component: Dnd, props: true
+    },
+    {
+      path: '/golf', name: 'Golf', component: Golf, props: true
     },
     {
       path: '/health', name: 'Health', component: Health, props: true
